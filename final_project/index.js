@@ -1,18 +1,29 @@
 // index.js
 
 const express = require("express");
-const app = express();
+const session = require("express-session");
 
-// Middleware: automatically parse JSON bodies (i.e., req.body)
+const app = express();
 app.use(express.json());
 
-// 1) Import and mount the “public” router at the root.
-//    Any request to /register (POST), / (GET), etc. would come here.
-//    (Right now, this router only has /register.)
+// 1) Set up session on /customer (so req.session is available if you need it later)
+app.use(
+    "/customer",
+    session({
+        secret: "fingerprint_customer",
+        resave: true,
+        saveUninitialized: true,
+    })
+);
+
+// 2) Mount “authenticated‐user” router under /customer
+const authRouter = require("./router/auth_users.js").authenticated;
+app.use("/customer", authRouter);
+
+// 3) Mount “public” router at /
 const publicRouter = require("./router/general.js").general;
 app.use("/", publicRouter);
 
-// 2) Start the server on port 5000
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
