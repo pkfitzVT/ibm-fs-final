@@ -1,4 +1,80 @@
-# Distribution / packaging
-node_modules
+# ===== Node & React =====
 
+# Node dependencies
+node_modules/
 
+# Build output (React)
+build/
+dist/
+public/build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output/
+
+# env files
+.env
+.env.*.local
+
+# Bower (if used)
+bower_components/
+
+# Yarn v2+ (Berry) cache/metadata
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# Parcel cache
+.cache/
+
+# Misc build/temp folders
+.cache/
+.tmp/
+temp/
+
+# Generated bundle reports
+bundle-report.html
+report.html
+
+# Miscellaneous
+*.log
+*.tmp
+*.temp
+*.pid
+*.seed
+
+# ===== WebStorm / JetBrains =====
+
+# IDE project files
+.idea/
+# WebStorm module files
+*.iml
+
+# Workspace folders and files (if you share settings between projects)
+.idea/*
+# You can optionally whitelist some IDE files if you do want them in Git:
+# !.idea/codeStyles
+# !.idea/inspectionProfiles
+# !.idea/tasks.xml
+# !.idea/dictionaries
+
+# OS-specific files
+.DS_Store
+Thumbs.db
