@@ -117,6 +117,58 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   });
 });
 
+/**
+ * DELETE /auth/review/:isbn
+ *   - Only the logged-in user (req.session.username) can delete their own review.
+ *   - URL example: DELETE http://localhost:5000/customer/auth/review/1
+ *   - No request body needed (we know who the user is from the session).
+ */
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn;
+  const username = req.session.username; // set when the user logged in
+
+  // 1) Ensure the user is logged in
+  if (!username) {
+    return res
+        .status(401)
+        .json({ message: "You must be logged in to delete your review." });
+  }
+
+  // 2) Check that the book exists
+  const book = books[isbn];
+  if (!book) {
+    return res
+        .status(404)
+        .json({ message: `Book with ISBN ${isbn} not found.` });
+  }
+
+  // 3) Check that this user has a review on this book
+  //    (If `book.reviews` is undefined or doesn’t have this username, there’s nothing to delete.)
+  if (!book.reviews || !Object.prototype.hasOwnProperty.call(book.reviews, username)) {
+    return res.status(404).json({
+      message: `No review by user '${username}' for book with ISBN ${isbn}.`,
+    });
+  }
+
+  // 4) Delete that user’s review
+  delete book.reviews[username];
+
+  // 5) If no other reviews remain, you could choose to delete the reviews object entirely:
+  //    if (Object.keys(book.reviews).length === 0) {
+  //      delete book.reviews;
+  //    }
+
+  // 6) Return success with the updated reviews (or an empty object if all reviews gone)
+  return res.status(200).json({
+    message: `Review by '${username}' deleted for book ${isbn}.`,
+    reviews: book.reviews || {},
+  });
+});
+
+
+
+
+
 module.exports.authenticated = regd_users;
 module.exports.users = users;
 module.exports.doesExist = doesExist;
