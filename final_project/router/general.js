@@ -106,9 +106,43 @@ public_users.get("/title/:title", function (req, res) {
 });
 
 // Get book review
-public_users.get("/review/:isbn", function (req, res) {
-  // …to be implemented later…
-  return res.status(300).json({ message: "Yet to be implemented" });
+public_users.get("/review/:isbn", (req, res) => {
+  // 1. Read the ISBN from the URL
+  const isbn = req.params.isbn;
+
+  // 2. Look up that book
+  const book = books[isbn];
+  if (!book) {
+    return res
+        .status(404)
+        .json({ message: `Book with ISBN ${isbn} not found` });
+  }
+
+  // 3. Check if there are any reviews
+  const reviewsObj = book.reviews;            // e.g. {} or { "alice": "Great!", ... }
+  const reviewKeys = Object.keys(reviewsObj); // array of usernames (or review-IDs)
+
+  if (reviewKeys.length === 0) {
+    // 4a. No reviews yet – send a friendly message
+    return res.status(200).json({
+      message:
+          "Please consider reviewing this book because there are no reviews yet.",
+    });
+  }
+
+  // 4b. There are reviews – return them (as raw object or transformed to an array)
+  //    Option A: Return the raw object
+  // return res.status(200).json(reviewsObj);
+
+  //    Option B: Return an array of { user, reviewText } pairs
+  const reviewEntries = reviewKeys.map((username) => ({
+    user: username,
+    reviewText: reviewsObj[username],
+  }));
+  return res.status(200).json(reviewEntries);
 });
 
-module.exports.general = public_users;
+
+
+
+  module.exports.general = public_users;
