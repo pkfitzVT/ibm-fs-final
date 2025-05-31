@@ -1,22 +1,19 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const session = require('express-session')
-const customer_routes = require('./router/auth_users.js').authenticated;
-const genl_routes = require('./router/general.js').general;
+// index.js
 
+const express = require("express");
 const app = express();
 
+// Middleware: automatically parse JSON bodies (i.e., req.body)
 app.use(express.json());
 
-app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
+// 1) Import and mount the “public” router at the root.
+//    Any request to /register (POST), / (GET), etc. would come here.
+//    (Right now, this router only has /register.)
+const publicRouter = require("./router/general.js").general;
+app.use("/", publicRouter);
 
-app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
+// 2) Start the server on port 5000
+const PORT = 5000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
- 
-const PORT =5000;
-
-app.use("/customer", customer_routes);
-app.use("/", genl_routes);
-
-app.listen(PORT,()=>console.log("Server is running"));

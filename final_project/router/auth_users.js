@@ -1,30 +1,34 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-let books = require("./booksdb.js");
-const regd_users = express.Router();
+// auth_users.js
 
+// 1) In-memory array of registered users.
+//    Each element looks like { username: "alice", password: "wonderland" }.
 let users = [];
 
-const isValid = (username)=>{ //returns boolean
-//write code to check is the username is valid
-}
+/**
+ * doesExist(username): boolean
+ *   Returns true if ANY user in `users` already has exactly this username.
+ */
+const doesExist = (username) => {
+  return users.some((u) => u.username === username);
+};
 
-const authenticatedUser = (username,password)=>{ //returns boolean
-//write code to check if username and password match the one we have in records.
-}
+/**
+ * isValid(username): boolean
+ *   Returns true if `username` is a non-empty, trimmed, alphanumeric string.
+ *   (If you want to allow underscores/hyphens, adjust the regex accordingly.)
+ */
+const isValid = (username) => {
+  if (typeof username !== "string") return false;
+  const trimmed = username.trim();
+  if (trimmed.length === 0) return false;
+  // Allow only letters and digits (no spaces/special chars):
+  return /^[a-zA-Z0-9]+$/.test(trimmed);
+};
 
-//only registered users can login
-regd_users.post("/login", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
-
-// Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
-
-module.exports.authenticated = regd_users;
-module.exports.isValid = isValid;
-module.exports.users = users;
+// 2) Export everything, so other files can do:
+//       const { users, doesExist, isValid } = require("./auth_users.js");
+module.exports = {
+  users,
+  doesExist,
+  isValid,
+};
