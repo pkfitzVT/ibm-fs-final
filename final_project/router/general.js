@@ -41,8 +41,35 @@ public_users.get("/isbn/:isbn", (req, res) => {
 
 // Get book details based on author
 public_users.get("/author/:author", function (req, res) {
-  // …to be implemented later…
-  return res.status(300).json({ message: "Yet to be implemented" });
+  // 1. Grab the author string from the URL:
+  const requestedAuthor = req.params.author.toLowerCase();
+
+  // 2. Prepare an array to hold all matching books
+  const matchingBooks = [];
+
+  // 3. Iterate through every ISBN key in the `books` object
+  Object.keys(books).forEach((isbn) => {
+    // Access the book object at this ISBN:
+    const book = books[isbn];
+
+    // Compare author names case-insensitively
+    if (book.author.toLowerCase() === requestedAuthor) {
+      // If it matches, push the entire book object into matchingBooks
+      matchingBooks.push({ isbn: isbn, ...book });
+      // (optional) If you only want the title/author/reviews, push book alone
+      // matchingBooks.push(book);
+    }
+  });
+
+  // 4. If we found at least one match, return HTTP 200 with the array:
+  if (matchingBooks.length > 0) {
+    return res.status(200).json(matchingBooks);
+  }
+
+  // 5. If no matches, return 404 Not Found with a message
+  return res
+      .status(404)
+      .json({ message: `No books found by author "${req.params.author}"` });
 });
 
 // Get all books based on title
