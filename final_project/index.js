@@ -6,6 +6,11 @@ const app = express();
 
 app.use(express.json());
 
+// Health‐check route (for testing FE⇄BE connectivity)
+app.get("/api/health", (req, res) => {
+    res.json({ status: "OK" });
+});
+
 // 1) Any route under /customer/* can use session:
 //    e.g. /customer/login, /customer/auth/review/:isbn
 app.use(
